@@ -1,0 +1,4 @@
+[PATHS]
+INPUT_PATH = `your_input_path`
+OUTPUT_PATH = `your_output_path`
+SIG_PATH = `your_sig_exe_path`
