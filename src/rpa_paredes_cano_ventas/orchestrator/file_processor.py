@@ -55,7 +55,7 @@ class FileProcessor:
         int_sheet_name = 0
         start = 1
         output_dir = output_dir / processable.output_path
-        files: list[Path, ...] = []
+        files: list[Path] = []
         export = Export(output_path=output_dir)
         for i, chunk in enumerate(reader.get_data(processable.file_path, batch_size)):
 

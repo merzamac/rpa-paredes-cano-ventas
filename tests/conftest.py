@@ -11,3 +11,10 @@ def input_dir() -> Path:
 @fixture(scope="session")
 def output_dir() -> Path:
     return routes.OUTPUT_DIR
+
+@fixture(scope="session")
+def excel_errores() -> Path:
+    files = routes.OUTPUT_DIR.rglob(pattern="*.xlsx",case_sensitive=True)
+
+    excel =  tuple(file for file in files if file.stem.startswith("errores"))
+    return excel[0] or Path()

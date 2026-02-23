@@ -18,8 +18,8 @@ class CredentialManager:
 
     @classmethod
     def get_data(cls, service_name: str) -> dict[str, str]:
-        logger.info(f"|--------Enter your {service_name} credentials--------|")
-        logger.info("|for token use 'token' as username and your token as password|")
+        print(f"|------------Enter your {service_name} credentials------------|")
+        print("|for token use 'token' as username and your token as password|")
         username = input(f"Enter your username: ").strip()
         password = getpass(f"Enter your password: ")
         return {"username": username, "password": password}

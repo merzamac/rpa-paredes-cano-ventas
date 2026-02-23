@@ -1,2 +1,2 @@
-from contabot_ventas.apps.aconsys.modules.centro_costos import CentroCostos
-from contabot_ventas.apps.aconsys.modules.cuenta_corriente import CuentaCorriente
+from .modules.centro_costos import CentroCostos
+from .modules.cuenta_corriente import CuentaCorriente

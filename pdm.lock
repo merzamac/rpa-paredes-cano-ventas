@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:9baf7f30f7550c50f4d842c6e702dc76b11107760e718f2291ee2be55bd3c689"
+content_hash = "sha256:ac7bd9215ce7618f295e94fb0a7148f9e1f8343dded1c5a947fdeeae870286b3"
 
 [[metadata.targets]]
 requires_python = ">=3.13"
@@ -82,6 +82,17 @@ marker = "sys_platform == \"win32\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
+]
+
+[[package]]
+name = "comtypes"
+version = "1.4.15"
+requires_python = ">=3.9"
+summary = "Pure Python COM package"
+groups = ["default"]
+files = [
+    {file = "comtypes-1.4.15-py3-none-any.whl", hash = "sha256:cda90486de8762ec57d7ce04e68721920911f3f03415cb29afdf7609c427c7e3"},
+    {file = "comtypes-1.4.15.tar.gz", hash = "sha256:c72b9968a4e920087183a364c5a13b174e02b11c302cdd92690d14c95ac1b312"},
 ]
 
 [[package]]
@@ -417,6 +428,36 @@ files = [
 ]
 
 [[package]]
+name = "psutil"
+version = "7.2.2"
+requires_python = ">=3.6"
+summary = "Cross-platform lib for process and system monitoring."
+groups = ["default"]
+files = [
+    {file = "psutil-7.2.2-cp313-cp313t-macosx_10_13_x86_64.whl", hash = "sha256:2edccc433cbfa046b980b0df0171cd25bcaeb3a68fe9022db0979e7aa74a826b"},
+    {file = "psutil-7.2.2-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:e78c8603dcd9a04c7364f1a3e670cea95d51ee865e4efb3556a3a63adef958ea"},
+    {file = "psutil-7.2.2-cp313-cp313t-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1a571f2330c966c62aeda00dd24620425d4b0cc86881c89861fbc04549e5dc63"},
+    {file = "psutil-7.2.2-cp313-cp313t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:917e891983ca3c1887b4ef36447b1e0873e70c933afc831c6b6da078ba474312"},
+    {file = "psutil-7.2.2-cp313-cp313t-win_amd64.whl", hash = "sha256:ab486563df44c17f5173621c7b198955bd6b613fb87c71c161f827d3fb149a9b"},
+    {file = "psutil-7.2.2-cp313-cp313t-win_arm64.whl", hash = "sha256:ae0aefdd8796a7737eccea863f80f81e468a1e4cf14d926bd9b6f5f2d5f90ca9"},
+    {file = "psutil-7.2.2-cp314-cp314t-macosx_10_15_x86_64.whl", hash = "sha256:eed63d3b4d62449571547b60578c5b2c4bcccc5387148db46e0c2313dad0ee00"},
+    {file = "psutil-7.2.2-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:7b6d09433a10592ce39b13d7be5a54fbac1d1228ed29abc880fb23df7cb694c9"},
+    {file = "psutil-7.2.2-cp314-cp314t-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1fa4ecf83bcdf6e6c8f4449aff98eefb5d0604bf88cb883d7da3d8d2d909546a"},
+    {file = "psutil-7.2.2-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e452c464a02e7dc7822a05d25db4cde564444a67e58539a00f929c51eddda0cf"},
+    {file = "psutil-7.2.2-cp314-cp314t-win_amd64.whl", hash = "sha256:c7663d4e37f13e884d13994247449e9f8f574bc4655d509c3b95e9ec9e2b9dc1"},
+    {file = "psutil-7.2.2-cp314-cp314t-win_arm64.whl", hash = "sha256:11fe5a4f613759764e79c65cf11ebdf26e33d6dd34336f8a337aa2996d71c841"},
+    {file = "psutil-7.2.2-cp36-abi3-macosx_10_9_x86_64.whl", hash = "sha256:ed0cace939114f62738d808fdcecd4c869222507e266e574799e9c0faa17d486"},
+    {file = "psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl", hash = "sha256:1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979"},
+    {file = "psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:076a2d2f923fd4821644f5ba89f059523da90dc9014e85f8e45a5774ca5bc6f9"},
+    {file = "psutil-7.2.2-cp36-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b0726cecd84f9474419d67252add4ac0cd9811b04d61123054b9fb6f57df6e9e"},
+    {file = "psutil-7.2.2-cp36-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:fd04ef36b4a6d599bbdb225dd1d3f51e00105f6d48a28f006da7f9822f2606d8"},
+    {file = "psutil-7.2.2-cp36-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:b58fabe35e80b264a4e3bb23e6b96f9e45a3df7fb7eed419ac0e5947c61e47cc"},
+    {file = "psutil-7.2.2-cp37-abi3-win_amd64.whl", hash = "sha256:eb7e81434c8d223ec4a219b5fc1c47d0417b12be7ea866e24fb5ad6e84b3d988"},
+    {file = "psutil-7.2.2-cp37-abi3-win_arm64.whl", hash = "sha256:8c233660f575a5a89e6d4cb65d9f938126312bca76d8fe087b947b3a1aaac9ee"},
+    {file = "psutil-7.2.2.tar.gz", hash = "sha256:0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372"},
+]
+
+[[package]]
 name = "pyarrow"
 version = "23.0.1"
 requires_python = ">=3.10"
@@ -567,6 +608,70 @@ dependencies = [
 files = [
     {file = "pytest-9.0.2-py3-none-any.whl", hash = "sha256:711ffd45bf766d5264d487b917733b453d917afd2b0ad65223959f59089f875b"},
     {file = "pytest-9.0.2.tar.gz", hash = "sha256:75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11"},
+]
+
+[[package]]
+name = "python-calamine"
+version = "0.6.2"
+requires_python = ">=3.10"
+summary = "Python binding for Rust's library for reading excel and odf file - calamine"
+groups = ["default"]
+files = [
+    {file = "python_calamine-0.6.2-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:4c6e68c233841604fa3f63899d13bd2e47cddf0787c4b4b8188f74c3be452045"},
+    {file = "python_calamine-0.6.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0fd5bcbd904d05f8b9f127a93706fdbb0a5934efdc9677b402a82d91e6e3f920"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cef6454aa1b3b2137d7a202c9f84b87dffdd187ff218f2cee459480c102c20a3"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:19c55c35edaf89b4d18d5d3cfaac619362f2e8339e4c876f9f0c80640d990db3"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:d29984496a22286f511668ea6483293c0e58ac0f25916e1d88125e5e1d83313b"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:3b0c4deabc2646c6c07abb3620088c5d6d2af26f8954726938ebcdbc6c56a8bd"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fc536feb86c948b330c4db8a9f1d9f9094f8d70a981d04de87ece9d9b9300458"},
+    {file = "python_calamine-0.6.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:7c0f9e769c735cfb0564aefb4273c6dfeee9fbab1db69b9099cb19cfb8208ddf"},
+    {file = "python_calamine-0.6.2-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:e3824c211eb9505461a9820ed893cf6e39a3af8024fd1892d2cc174ce8329955"},
+    {file = "python_calamine-0.6.2-cp313-cp313-musllinux_1_1_armv7l.whl", hash = "sha256:8323edededa282cace538805cfa7cab30ad9dd19bca4a23215ea975c73ce9f26"},
+    {file = "python_calamine-0.6.2-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:f64b93e41dd878a317f958fbf9bfa64342ef9aea58956a93a52d4b9d646a6ef4"},
+    {file = "python_calamine-0.6.2-cp313-cp313-win32.whl", hash = "sha256:91fbfa837aaa6f7fc72e9277678aa0c95b0c3c7df76c7c7bac4ab4a128834a70"},
+    {file = "python_calamine-0.6.2-cp313-cp313-win_amd64.whl", hash = "sha256:0b2464e036819ecce50181220e120d674b1caac806a31e48eed2e2183acf9a69"},
+    {file = "python_calamine-0.6.2-cp313-cp313-win_arm64.whl", hash = "sha256:64b1ce2bd452a9d2ae00a97e2629e3444b9669ce348e1f534f3a91f55694de15"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-macosx_10_12_x86_64.whl", hash = "sha256:050f0b830fcdf209826e98849432fb6ee1328895949bf7c63632fd34130cef8d"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-macosx_11_0_arm64.whl", hash = "sha256:f3636e14736cd2ab2377418aeb2ef8c17d1ce7e19bbbe52e445027cf43a2a745"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f86a51485f93264679eb449dc93dc498553f449322c81936eac47ace45365e89"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:b44fbdd11ac44dc5eecf49c1597e7234633cbc9f38c73521ce00278cf0bd8976"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:a0d5fd48c92ae04bf8ef1f326d7ec23295545d171f4b810dc8fa08f28932900f"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:19363504d08c5c2c7aca188a5c4ded89a47cbba1cbc9a083cd230839f977c5a8"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:72078b550a871249c07b71fe5b94fbd30857604ff99380304d273d84a8bcd7c8"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:e18e524ef1532f8269739b63ca9c6ab7dbd75e9dff20ca7e2e2d8d13c59964b2"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-musllinux_1_1_aarch64.whl", hash = "sha256:b665c55d5d03b5cc205e4b68c711712cff8aac273f2aa930ab8ab5960b9dc90f"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-musllinux_1_1_armv7l.whl", hash = "sha256:dc21843a6fca8ae5a722e66bde14324da4f43be98b772b0689ac75dd89d888fd"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-musllinux_1_1_x86_64.whl", hash = "sha256:e16192fbbb3a3009c89aa62530d807bca272e68a67b362da5c9d156a8950cd51"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-win_amd64.whl", hash = "sha256:a94a560c0b7ec791f6edfb3fede6ade35b048a61be80e584de8411bf930a8902"},
+    {file = "python_calamine-0.6.2-cp313-cp313t-win_arm64.whl", hash = "sha256:2574072b9e26aeae26ebd051a1661bb72fd202ce2904f920f9c605de9555c057"},
+    {file = "python_calamine-0.6.2-cp314-cp314-macosx_10_12_x86_64.whl", hash = "sha256:630d32f10b16bafbca86fb9373e7a4eccbd0268bc9e80dac923b731a8e472704"},
+    {file = "python_calamine-0.6.2-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:39de4d8c1f9db34d02a2d9b7eaad55cdd013b5881cf0a5ab281e2167d090b22e"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:36148e9c5022494fd6a2c111fb51d24e6e39cbf3027a3ddedad44545598609ca"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:2526bddc75829b4376a515cad83afeab4019bbe5b770a892852de66b0017527b"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:711a664b8cf1e4f6c55fbd5e15e70fc5792e382e3866416044c23b0d3ffdd055"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:8d449b6130f1469810ebe9f423f9efecaabc60e110db7a5a56d0f098ea78b22f"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8f3841986cf512893e8871555ef586387e5e36484cebd0d9398046c3bde1e13c"},
+    {file = "python_calamine-0.6.2-cp314-cp314-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:7a8f437273c8dee9d9ae89cc766b6c313a1a99155b74a1a6560a01b82db89b51"},
+    {file = "python_calamine-0.6.2-cp314-cp314-musllinux_1_1_aarch64.whl", hash = "sha256:6a2dfcfbf1907f37e6a13e2dffff409f79cff911e44e1ce7deb65510b8bbb0de"},
+    {file = "python_calamine-0.6.2-cp314-cp314-musllinux_1_1_armv7l.whl", hash = "sha256:0c4a6131835f28897cdf36942067220e2c8c6c23f4b7747a094dca6748190c12"},
+    {file = "python_calamine-0.6.2-cp314-cp314-musllinux_1_1_x86_64.whl", hash = "sha256:e8f50885c5042fb3bdd9ad820e4b871e6a1758e15957964acf0515b5d0fb3984"},
+    {file = "python_calamine-0.6.2-cp314-cp314-win32.whl", hash = "sha256:d4b6fe3564596b1a85fdb7dea60ae7dda2bd56898e88128e0306ebfca29d3659"},
+    {file = "python_calamine-0.6.2-cp314-cp314-win_amd64.whl", hash = "sha256:39a6703c80e71c9df2eefa4b9aedd994c27d6ae1fda07a48ee3306414d76d39b"},
+    {file = "python_calamine-0.6.2-cp314-cp314-win_arm64.whl", hash = "sha256:cedae91678a016690775a815c7dc66288b3f0968451bf2161689846b5b330b84"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-macosx_10_12_x86_64.whl", hash = "sha256:5c3ca40133330cccdafb7326c39f7dd60247ad1995d9b92fdcd5052853fc31e5"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:5599d12fa06ad42694255fecb1de48f6eb2d074fa55b2f532a93158ae1cc3958"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fb50c1f6303650d5712a707c8c13842eeebcd433bd660dcdaebc8aedd9085d37"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:42f1b3172fc2c916990a9749c30f5c2aad5351a807c6597febf7b5b9444eaf4d"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:5f3bb6370d855c9035e8727e6d8685775d411e5f5a3b114e0048bacd2efc2dc5"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:8d790fa2065c3c5d07de27ead53486b6afa64b935036444e5593c670baaf7394"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ba4ac4bc59fb16e76d57bbbb2b5567e9d78f99e0b7d6cf27b1fc968dddad9e52"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:16750f933fd68d6796c24390d5379abe02cc592b8cb5c2c715d09885a4e4db78"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-musllinux_1_1_aarch64.whl", hash = "sha256:0c3a65ee5e1bbed8d32225882b6fae147c187a5019b895bd1a9631fb1e8ebd1b"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-musllinux_1_1_armv7l.whl", hash = "sha256:80f54662715b25078e90794d792df6ef45154f1affea472c9e802c5d3dda5a9e"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-musllinux_1_1_x86_64.whl", hash = "sha256:7568800d967b7b7b56d1a139d8d6c343b70d88695c8f3c3906aaa1b8bff76900"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-win_amd64.whl", hash = "sha256:aab8ef96f19feb5df3704dc04805b1e0d6e82827546bea92d660344c674ed9e1"},
+    {file = "python_calamine-0.6.2-cp314-cp314t-win_arm64.whl", hash = "sha256:514b3b0ccba57cf807bd4869a76020eb53e2d797f35c95fceb274a5208da1651"},
+    {file = "python_calamine-0.6.2.tar.gz", hash = "sha256:2c90e5224c5e92db9fcd8f22b6085ce63b935cfe7a893ac9a1c3c56793bafd9d"},
 ]
 
 [[package]]
@@ -755,6 +860,19 @@ dependencies = [
 files = [
     {file = "tzlocal-5.3.1-py3-none-any.whl", hash = "sha256:eb1a66c3ef5847adf7a834f1be0800581b683b5608e74f86ecbcef8ab91bb85d"},
     {file = "tzlocal-5.3.1.tar.gz", hash = "sha256:cceffc7edecefea1f595541dbd6e990cb1ea3d19bf01b2809f362a03dd7921fd"},
+]
+
+[[package]]
+name = "uiautomation"
+version = "2.0.29"
+summary = "Python UIAutomation for Windows"
+groups = ["default"]
+dependencies = [
+    "comtypes>=1.2.1",
+]
+files = [
+    {file = "uiautomation-2.0.29-py3-none-any.whl", hash = "sha256:5dd51c9e77e70470142a13d903be67f256c445e7cf20b47ada0ece2bdaff9f32"},
+    {file = "uiautomation-2.0.29.tar.gz", hash = "sha256:3c169112043ce21065aead1d79c3baebdafc9cf03bd24ded02b2db11d423d88d"},
 ]
 
 [[package]]

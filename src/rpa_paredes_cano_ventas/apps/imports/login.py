@@ -1,6 +1,7 @@
 from uiautomation import WindowControl, SendKeys
-from contabot_ventas.apps.base  import BaseLoginWindow
-from contabot_ventas.apps.imports.main_window import ImportMainWindow
+from rpa_paredes_cano_ventas.apps.base  import BaseLoginWindow
+from rpa_paredes_cano_ventas.apps.imports.main_window import ImportMainWindow
+
 class ImportLoginWindow(BaseLoginWindow):
     _window = WindowControl(searchDepth=1, Name="Módulo Importación")
 
@@ -15,6 +16,7 @@ class ImportLoginWindow(BaseLoginWindow):
         SendKeys(username)
         SendKeys("{Tab}")
         SendKeys(password)
+        SendKeys("{Enter}")
         SendKeys("{Enter}")
 
         if self.exists(timeout=5):

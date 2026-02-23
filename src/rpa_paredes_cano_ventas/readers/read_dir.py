@@ -21,7 +21,7 @@ class ReadDir(metaclass=UtilityMut):
         # Usamos un operador ternario para retornar el generador directamente.
         # Esto evita cargar listas en memoria y mantiene la evaluación perezosa (lazy).
         return (
-            dir_path.rglob(pattern, case_sensitive=False)
+            tuple(dir_path.rglob(pattern, case_sensitive=False))
             if recursive
-            else dir_path.glob(pattern, case_sensitive=False)
+            else tuple(dir_path.glob(pattern, case_sensitive=False))
         )

@@ -1,6 +1,6 @@
 from uiautomation import WindowControl
 from time import sleep
-from contabot_ventas.importaciones.interfaces import Process
+from rpa_paredes_cano_ventas.apps.base import Process
 
 class SalesCancellation(Process):
     def __init__(self,window: WindowControl)-> None:
