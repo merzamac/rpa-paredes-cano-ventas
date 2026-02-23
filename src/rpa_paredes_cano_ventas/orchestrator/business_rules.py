@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
 
+# import_app = ImportPlatform()
+# aconsys_app = AconsysPlatform()
 @dataclass(frozen=True, slots=True)
 class BusinessRulesWithApps:
     @staticmethod

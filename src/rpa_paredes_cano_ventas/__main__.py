@@ -14,8 +14,6 @@ from rpa_paredes_cano_ventas.readers.read_input_output import ReadOutputCSVPrevi
 class BotOrchestrator:
     def __init__(self):
         self.file_service = FileProcessor()
-        self.import_app = ImportPlatform()
-        self.aconsys_app = AconsysPlatform()
 
     def run(self):
         # 1. Procesamiento Inicial
@@ -35,7 +33,6 @@ class BotOrchestrator:
                 )
 
                 # Ejecución
-                # self.file_service = FileProcessor()
                 csv_outputs = self.file_service.create_massive_csv(
                     reader=reader,
                     processable=processable_file,

@@ -54,7 +54,7 @@ class ReadOutputCSVPreviousMonth(metaclass=UtilityMut):
     __slots__ = []
 
     @staticmethod
-    def execute(output_dir: Path) -> tuple[ProcessableFile, ...]:
+    def execute(output_dir: Path) -> tuple[ProcessableFile, ...] | None:
         """
         Args:
             output_dir (Path): La ruta de la carpeta de salida.
