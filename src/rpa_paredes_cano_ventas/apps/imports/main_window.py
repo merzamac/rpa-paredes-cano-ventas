@@ -1,8 +1,9 @@
-from pandas import Series
 from uiautomation import WindowControl, SendKeys
 from datetime import date
 from pathlib import Path
 from rpa_paredes_cano_ventas.apps.base import TopLevelWindow
+from rpa_paredes_cano_ventas.types import DataCSV
+from typing import Optional
 from rpa_paredes_cano_ventas.apps.imports import (
     SalesImports,
     SalesCancellation,
@@ -53,6 +54,29 @@ class ImportMainWindow(TopLevelWindow):
         )
         return SalesCancellation(window)
 
+    def import_files(self, data_csv: DataCSV) -> Optional[Path]:
+        importacion = self.sales_imports
+        importacion.period(data_csv.period)
+        importacion.start
+
+        for file in data_csv.files:
+            importacion.select_file(file)
+            importacion.upload
+
+        excel_file: Optional[Path] = None
+        # Solo intentamos exportar si la plataforma indica que hay algo que procesar
+        if importacion.process:
+            # Asumimos que el primer archivo nos da la ruta base
+            excel_file = importacion.export(data_csv.save_dir, data_csv.period)
+
+        importacion.exit
+
+        # Verificamos que el archivo realmente exista antes de devolverlo
+        if excel_file and excel_file.exists():
+            return excel_file
+
+        return None
+
     @property
     def series_by_cost_center(self) -> SeriesByCostCenter:
         window = self._open_system_window(
@@ -65,8 +89,6 @@ class ImportMainWindow(TopLevelWindow):
         file = save_dir / file_name
         window = self.series_by_cost_center
         return Path()
-
-    ()
 
     def navegar_menu_sistema(
         self,

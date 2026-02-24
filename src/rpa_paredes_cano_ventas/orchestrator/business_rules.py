@@ -26,7 +26,8 @@ class BusinessRulesWithApps:
         )
         # Solo obtenemos el archivo si hubo errores/exportación
         excel_file: Optional[Path] = None
-        excel_file = procesar_carga_y_exportar_errores(main_imports, data_csv)
+        excel_file = main_imports.import_files(data_csv)
+        # excel_file = procesar_carga_y_exportar_errores(main_imports, data_csv)
         errores_raw: tuple[RegistroMaestro, ...] = ()
 
         if not excel_file:
