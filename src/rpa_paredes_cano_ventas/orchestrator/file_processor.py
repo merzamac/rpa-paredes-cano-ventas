@@ -71,7 +71,9 @@ class FileProcessor:
         export.close()
         logger.info("Procesamiento finalizado con éxito.")
         # MakeXLSXIxport.execute(files, output_dir)
-        return DataCSV(period=processable.period_date, files=tuple(files))
+        return DataCSV(
+            period=processable.period_date, files=tuple(files), save_dir=output_dir
+        )
 
     def _make_maviso(
         self,

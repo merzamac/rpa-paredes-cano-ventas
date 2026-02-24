@@ -77,7 +77,9 @@ class ReadOutputCSVPreviousMonth(metaclass=UtilityMut):
         )
 
         return (
-            DataCSV(period=month_before.date(), files=input_files)
+            DataCSV(
+                period=month_before.date(), files=input_files, save_dir=file_output_dir
+            )
             if input_files
             else None
         )

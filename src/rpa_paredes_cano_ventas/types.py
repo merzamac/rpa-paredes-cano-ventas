@@ -1,3 +1,4 @@
+from numpy import save
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -36,3 +37,4 @@ class SuffixTypes(metaclass=UtilityMut):
 class DataCSV:
     period: date
     files: tuple[Path, ...]
+    save_dir: Path

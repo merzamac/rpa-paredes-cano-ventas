@@ -111,12 +111,11 @@ def procesar_carga_y_exportar_errores(
         importacion.select_file(file)
         importacion.upload
 
-    excel_file = None
+    excel_file: Optional[Path] = None
     # Solo intentamos exportar si la plataforma indica que hay algo que procesar
     if importacion.process:
         # Asumimos que el primer archivo nos da la ruta base
-        base_path = data_csv.files[0].parent
-        excel_file = importacion.export(base_path, data_csv.period)
+        excel_file = importacion.export(data_csv.save_dir, data_csv.period)
 
     importacion.exit
 
