@@ -1,6 +1,6 @@
 from asyncio.log import logger
 from rpa_paredes_cano_ventas import routes
-from rpa_paredes_cano_ventas.types import DAtaCSV
+from rpa_paredes_cano_ventas.types import DataCSV
 from rpa_paredes_cano_ventas.models.header import Header
 from rpa_paredes_cano_ventas.models.processable import ProcessableFile
 from rpa_paredes_cano_ventas.readers.fastexcel_reader import ExcelPLEReader
@@ -17,7 +17,7 @@ class BotOrchestrator:
 
     def run(self):
         # 1. Procesamiento Inicial
-        csv_outputs: DAtaCSV | None = ReadOutputCSVPreviousMonth.execute(
+        csv_outputs: DataCSV | None = ReadOutputCSVPreviousMonth.execute(
             output_dir=routes.OUTPUT_DIR
         )
         if not csv_outputs:

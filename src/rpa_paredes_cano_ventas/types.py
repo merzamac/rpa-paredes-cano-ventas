@@ -33,6 +33,6 @@ class SuffixTypes(metaclass=UtilityMut):
 
 
 @dataclass(frozen=True, slots=True)
-class DAtaCSV:
+class DataCSV:
     period: date
     files: tuple[Path, ...]

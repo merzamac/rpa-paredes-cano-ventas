@@ -19,7 +19,7 @@ from datetime import date
 from rpa_paredes_cano_ventas.models.processable import (
     ProcessableFile,
 )
-from rpa_paredes_cano_ventas.types import DAtaCSV
+from rpa_paredes_cano_ventas.types import DataCSV
 
 
 class FileProcessor:
@@ -71,7 +71,7 @@ class FileProcessor:
         export.close()
         logger.info("Procesamiento finalizado con éxito.")
         # MakeXLSXIxport.execute(files, output_dir)
-        return DAtaCSV(period=processable.period_date, files=tuple(files))
+        return DataCSV(period=processable.period_date, files=tuple(files))
 
     def _make_maviso(
         self,

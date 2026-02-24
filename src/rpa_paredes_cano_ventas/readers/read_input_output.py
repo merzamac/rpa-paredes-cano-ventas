@@ -6,7 +6,7 @@ from rpa_paredes_cano_ventas.models.processable import (
     ProcessableFile,
     ProcessedFolder,
 )
-from rpa_paredes_cano_ventas.types import UtilityMut, DAtaCSV
+from rpa_paredes_cano_ventas.types import UtilityMut, DataCSV
 from locale import setlocale, LC_TIME
 
 
@@ -77,7 +77,7 @@ class ReadOutputCSVPreviousMonth(metaclass=UtilityMut):
         )
 
         return (
-            DAtaCSV(period=month_before.date(), files=input_files)
+            DataCSV(period=month_before.date(), files=input_files)
             if input_files
             else None
         )

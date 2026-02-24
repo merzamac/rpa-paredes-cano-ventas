@@ -6,7 +6,7 @@ from rpa_paredes_cano_ventas.apps.imports import (
 )
 from rpa_paredes_cano_ventas import routes
 from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
-from rpa_paredes_cano_ventas.types import DAtaCSV
+from rpa_paredes_cano_ventas.types import DataCSV
 from pathlib import Path
 from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
 from typing import Sequence, Optional
@@ -18,14 +18,12 @@ from rpa_paredes_cano_ventas.processor.series import SeriesSincronizador
 @dataclass(frozen=True, slots=True)
 class BusinessRulesWithApps:
     @staticmethod
-    def execute(data_csv: DAtaCSV):
-        # 2. Carga y Verificación
+    def execute(data_csv: DataCSV):
         credential = CredentialManager.get_credential("IMPORTACIONES")
         VasicontLauncher(routes.IMPORTACION_PATH).open()
         main_imports = ImportLoginWindow(routes.IMPORTACION_PATH).login(
             username=credential.username, password=credential.password
         )
-        # 2. Llamada al servicio (La caja negra que pediste)
         # Solo obtenemos el archivo si hubo errores/exportación
         excel_file: Optional[Path] = None
         excel_file = procesar_carga_y_exportar_errores(main_imports, data_csv)
@@ -98,7 +96,9 @@ class GetRegistroMaestroFromExcel:
         return tuple(RegistroMaestro(**data) for data in df.to_dict(orient="records"))
 
 
-def procesar_carga_y_exportar_errores(main_imports, data_csv) -> Optional[Path]:
+def procesar_carga_y_exportar_errores(
+    main_imports: ImportMainWindow, data_csv: DataCSV
+) -> Optional[Path]:
     """
     Coordina la carga de archivos y devuelve la ruta del Excel de errores
     solo si el proceso de exportación fue exitoso.
