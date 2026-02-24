@@ -1,8 +1,13 @@
+from pandas import Series
 from uiautomation import WindowControl, SendKeys
 from datetime import date
 from pathlib import Path
 from rpa_paredes_cano_ventas.apps.base import TopLevelWindow
-from rpa_paredes_cano_ventas.apps.imports import SalesImports, SalesCancellation
+from rpa_paredes_cano_ventas.apps.imports import (
+    SalesImports,
+    SalesCancellation,
+    SeriesByCostCenter,
+)
 
 # from contabot_ventas.importaciones.utils import navegar_menu_sistema
 from time import sleep
@@ -49,9 +54,19 @@ class ImportMainWindow(TopLevelWindow):
         return SalesCancellation(window)
 
     @property
-    def download_series(self) -> Path:
-        window = self._open_system_window("Ventana Series", pasos_derecha=5)
+    def series_by_cost_center(self) -> SeriesByCostCenter:
+        window = self._open_system_window(
+            "Series por Centro de Costo", pasos_derecha=2, pasos_abajo=1, enter_count=1
+        )
+        return SeriesByCostCenter(window)
+
+    def download_series(self, save_dir: Path) -> Path:
+        file_name = "series.xlsx"
+        file = save_dir / file_name
+        window = self.series_by_cost_center
         return Path()
+
+    ()
 
     def navegar_menu_sistema(
         self,
