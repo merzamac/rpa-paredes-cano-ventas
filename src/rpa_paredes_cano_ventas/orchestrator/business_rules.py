@@ -38,7 +38,7 @@ class BusinessRulesWithApps:
             file=excel_file, mode="simple"
         )
         series_ref = GetRegistroMaestroFromExcel.execute(
-            file=main_imports.download_series(), mode="FULL"
+            file=main_imports.download_series, mode="FULL"
         )
         # 2. Aplicar el patrón
         sincronizador = SeriesSincronizador(series_ref)
