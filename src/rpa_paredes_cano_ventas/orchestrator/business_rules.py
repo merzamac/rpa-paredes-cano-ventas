@@ -4,6 +4,7 @@ from rpa_paredes_cano_ventas.apps.imports import (
     ImportLoginWindow,
     VasicontLauncher,
 )
+from rpa_paredes_cano_ventas.apps.aconsys import AconsyMainWindow, AconsyLoginWindow
 from rpa_paredes_cano_ventas import routes
 from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
 from rpa_paredes_cano_ventas.types import DataCSV
@@ -48,9 +49,13 @@ class BusinessRulesWithApps:
         if nuevas_series:
             # 4. Registro en ambas plataformas
             credential = CredentialManager.get_credential("ACONSYS")
-            aconsys_files = aconsys_app.download_reports()
-            aconsys_app.register_series(new_series)
-            import_app.register_series(new_series)
+            main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+                user=credential.username, password=credential.password
+            )
+            file = main_aconsys.download_cost_centers(data_csv.save_dir)
+            cost_centers = GetCostCentersFromPDF.execute(file)
+            main_aconsys.register_series(new_series)
+            main_imports.upload_series(new_series)
 
 
 from pathlib import Path
