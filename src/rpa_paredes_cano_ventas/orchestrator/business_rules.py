@@ -1,84 +1,127 @@
 from dataclasses import dataclass
-from rpa_paredes_cano_ventas.apps.imports import ImportMainWindow,ImportLoginWindow,VasicontLauncher
+from rpa_paredes_cano_ventas.apps.imports import (
+    ImportMainWindow,
+    ImportLoginWindow,
+    VasicontLauncher,
+)
 from rpa_paredes_cano_ventas import routes
 from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
 from rpa_paredes_cano_ventas.types import DAtaCSV
 from pathlib import Path
-from pandas import read_excel, DataFrame
-from rpa_paredes_cano_ventas.models.registro_maestro import RegistroMaestro
+from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
+from typing import Sequence, Optional
+from rpa_paredes_cano_ventas.processor.series import SeriesSincronizador
+
+
 # import_app = ImportPlatform()
 # aconsys_app = AconsysPlatform()
 @dataclass(frozen=True, slots=True)
 class BusinessRulesWithApps:
     @staticmethod
-    def execute(data_csv:DAtaCSV):
+    def execute(data_csv: DAtaCSV):
         # 2. Carga y Verificación
         credential = CredentialManager.get_credential("IMPORTACIONES")
         VasicontLauncher(routes.IMPORTACION_PATH).open()
-        main_window = ImportLoginWindow(routes.IMPORTACION_PATH).login(
-        username=credential.username, password=credential.password)   
+        main_imports = ImportLoginWindow(routes.IMPORTACION_PATH).login(
+            username=credential.username, password=credential.password
+        )
+        # 2. Llamada al servicio (La caja negra que pediste)
+        # Solo obtenemos el archivo si hubo errores/exportación
+        excel_file: Optional[Path] = None
+        excel_file = procesar_carga_y_exportar_errores(main_imports, data_csv)
+        errores_raw: tuple[RegistroMaestro, ...] = ()
 
-        importacion = main_window.sales_imports
-        importacion.period(data_csv.period)
-        importacion.start
-        
-        for file in data_csv.files:
-            importacion.select_file(file)
-            importacion.upload
+        if not excel_file:
+            print("No se generó archivo de exportación. Proceso finalizado.")
+            return
 
-        import_results:dict={}
-        if importacion.process:
-            excel_file = importacion.export(file.parent,data_csv.period)
-            centros_costos_export = GetDataFromExcel.execute(excel_file)
-            #import_results = import_app.upload_csvs(csv_outputs)
-        importacion.exit
-        
+        # 3. Gestión de Diferencias (Aconsys)
+        errores_raw = GetRegistroMaestroFromExcel.execute(
+            file=excel_file, mode="simple"
+        )
+        series_ref = GetRegistroMaestroFromExcel.execute(
+            file=main_imports.download_series(), mode="FULL"
+        )
+        # 2. Aplicar el patrón
+        sincronizador = SeriesSincronizador(series_ref)
+        nuevas_series = sincronizador.identify_new_series(errores_raw, series_ref)
 
-        # if import_results.has_no_details():
-        #     print("Proceso finalizado con éxito.")
-        #     return
-
-        # # 3. Gestión de Diferencias (Aconsys)
-        # aconsys_files = aconsys_app.download_reports()
-        # new_series = file_service.identify_new_series(import_results, aconsys_files)
-
-        # if new_series:
-        #     # 4. Registro en ambas plataformas
-        #     aconsys_app.register_series(new_series)
-        #     import_app.register_series(new_series)
-
+        if nuevas_series:
+            # 4. Registro en ambas plataformas
+            credential = CredentialManager.get_credential("ACONSYS")
+            aconsys_files = aconsys_app.download_reports()
+            aconsys_app.register_series(new_series)
+            import_app.register_series(new_series)
 
 
-    # main_window.open_menu("Procesos", "Importación Ventas", 5)
-    #sleep(5)
-    # cuenta_corriente(main_window._window)
-    # main_window.open_menu_mante("Mantimiento", "Series por Centro de Costo", 2)
-    
-    
-    # resultado_import = open_menu_option(
-    #     main_window._window,
-    #     menu_name="Procesos",
-    #     option_name="Importación Ventas",
-    #     pasos_derecha=5,
-    #     _date=_date,
-    #     files_to_import=archivos_csv
-    # )
+from pathlib import Path
+from typing import Sequence, Literal
+import pandas as pd
+from dataclasses import dataclass
+
 
 @dataclass(frozen=True, slots=True)
-class GetDataFromExcel:
-    def execute(file:Path):
-        df_info = read_excel(file, engine="calamine",header=0,usecols=["Serie", "Sucursal"], dtype="str")
-        registros_dict = df_info.rename(columns={
-        "Serie": "serie", 
-        "Sucursal": "sucursal"
-        }).to_dict(orient='records')
-        return tuple(RegistroMaestro(**data) for data in registros_dict)
-    
-    def exported_file(file):
-        df_info = read_excel(file, engine="calamine",header=0,usecols=["Serie", "Sucursal"], dtype="str")
-        registros_dict = df_info.rename(columns={
-        "Serie": "serie", 
-        "Sucursal": "sucursal"
-        }).to_dict(orient='records')
-        return tuple(RegistroMaestro(**data) for data in registros_dict)
+class GetRegistroMaestroFromExcel:
+    # Definimos los esquemas de columnas como constantes de clase
+    SCHEMAS = {
+        "simple": {"Serie": "serie", "Sucursal": "sucursal"},
+        "full": {
+            "Serie": "serie",
+            "C.C.": "centro_costo",
+            "Descripción": "descripcion_cc",
+            "Sucursal": "sucursal",
+            "T.Op.": "tipo_oper",
+            "Descripción.1": "descripcion_oper",
+            "Cta.Cte.": "cuenta_corriente",
+            "Descripción.2": "descripcion_cta",
+        },
+    }
 
+    @classmethod
+    def execute(
+        cls, file: Path, mode: Literal["simple", "full"] = "full"
+    ) -> tuple[RegistroMaestro, ...]:
+        """
+        Un solo punto de entrada para cualquier tipo de extracción.
+        """
+        mappings = cls.SCHEMAS.get(mode, cls.SCHEMAS["full"])
+
+        # Leemos el archivo
+        df = pd.read_excel(file, engine="calamine", header=0, dtype=str)
+
+        # Seleccionamos solo las columnas que existen en nuestro mapeo y renombramos
+        # El uso de .intersection asegura que no explote si falta una columna opcional
+        cols_to_use = [c for c in df.columns if c in mappings]
+
+        df = df[cols_to_use].rename(columns=mappings)
+
+        return tuple(RegistroMaestro(**data) for data in df.to_dict(orient="records"))
+
+
+def procesar_carga_y_exportar_errores(main_imports, data_csv) -> Optional[Path]:
+    """
+    Coordina la carga de archivos y devuelve la ruta del Excel de errores
+    solo si el proceso de exportación fue exitoso.
+    """
+    importacion = main_imports.sales_imports
+    importacion.period(data_csv.period)
+    importacion.start
+
+    for file in data_csv.files:
+        importacion.select_file(file)
+        importacion.upload
+
+    excel_file = None
+    # Solo intentamos exportar si la plataforma indica que hay algo que procesar
+    if importacion.process:
+        # Asumimos que el primer archivo nos da la ruta base
+        base_path = data_csv.files[0].parent
+        excel_file = importacion.export(base_path, data_csv.period)
+
+    importacion.exit
+
+    # Verificamos que el archivo realmente exista antes de devolverlo
+    if excel_file and excel_file.exists():
+        return excel_file
+
+    return None
