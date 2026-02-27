@@ -9,6 +9,7 @@ from rpa_paredes_cano_ventas.apps.imports import (
     SalesCancellation,
     SeriesByCostCenter,
 )
+from rpa_paredes_cano_ventas.utils.file_explorer import FileExplorerWindow
 
 # from contabot_ventas.importaciones.utils import navegar_menu_sistema
 from time import sleep
@@ -67,7 +68,8 @@ class ImportMainWindow(TopLevelWindow):
         # Solo intentamos exportar si la plataforma indica que hay algo que procesar
         if importacion.process:
             # Asumimos que el primer archivo nos da la ruta base
-            excel_file = importacion.export(data_csv.save_dir, data_csv.period)
+            name = f"errores{data_csv.period.month:02d}{str(data_csv.period.year)[-2:]}"
+            excel_file = importacion.export(data_csv.save_dir, name)
 
         importacion.exit
 
@@ -80,15 +82,27 @@ class ImportMainWindow(TopLevelWindow):
     @property
     def series_by_cost_center(self) -> SeriesByCostCenter:
         window = self._open_system_window(
-            "Series por Centro de Costo", pasos_derecha=2, pasos_abajo=1, enter_count=1
+            "Series por Cuenta Corriente", pasos_derecha=2, pasos_abajo=0, enter_count=2
         )
         return SeriesByCostCenter(window)
 
-    def download_series(self, save_dir: Path) -> Path:
-        file_name = "series.xlsx"
-        file = save_dir / file_name
+    def download_series(self, save_dir: Path, name:str) -> Path:
+        
         window = self.series_by_cost_center
-        return Path()
+        
+        return window.export(save_dir,name)
+    def upload_series(self, file: Path) -> None:
+        
+        window = self.series_by_cost_center
+        window.importar
+        window_explorer = self._window.WindowControl(searchDepth=1,Name="Importar Archivo")
+        assert window_explorer.Exists(maxSearchSeconds=15)
+        file_explorer = FileExplorerWindow(window_explorer)
+        file_explorer.load_file(file)
+        window._handle_vfp_dialog()
+        sleep(15)
+        window.exit
+        
 
     def navegar_menu_sistema(
         self,
@@ -133,8 +147,11 @@ class ImportMainWindow(TopLevelWindow):
     def _open_system_window(self, window_name: str, **nav_kwargs):
         self.ensure_ready()
         self.navegar_menu_sistema(**nav_kwargs)
+        name = self._window.Name
 
-        window = self._window.WindowControl(searchDepth=3, Name=window_name)
+        job_area = self._window.PaneControl(searchDepth=1,ClassName='importaci9c000000')
+        #childre = job_area.GetChildren()
+        window = job_area.WindowControl(searchDepth=1, Name=window_name)
 
         if not window.Exists(maxSearchSeconds=15):
             raise TimeoutError(f"No abrió {window_name}")

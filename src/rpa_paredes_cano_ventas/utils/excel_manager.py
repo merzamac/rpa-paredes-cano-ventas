@@ -38,8 +38,6 @@ class ExcelManager:
         #    self.excel_window_control.Maximize()
 
     def save(self, save_dir: Path, name: str) -> Path:
-        ahora: datetime = datetime.now()
-        hora: str = ahora.strftime("%H-%M-%S")
         file_name: str = f"{name}.xlsx"
 
         self.excel_window_control.SetFocus()
@@ -50,9 +48,9 @@ class ExcelManager:
         )
 
         file_explorer_window: FileExplorerWindow = FileExplorerWindow(save_as)
-        file_explorer_window.save_as(save_dir, file_name)
+        file = file_explorer_window.save_as(save_dir, file_name)
 
-        return file_name
+        return file
 
     def close(self) -> None:
 

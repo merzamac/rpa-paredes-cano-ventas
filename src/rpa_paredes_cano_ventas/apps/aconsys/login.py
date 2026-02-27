@@ -21,14 +21,14 @@ class AconsyLoginWindow(BaseLoginWindow):
         connect = self._window.ButtonControl(searchDepth=2,Name="Conectar")
         assert connect.Exists(5)
         return connect
-    def login(self, user: str, password: str) -> AconsyMainWindow:
+    def login(self, username: str, password: str) -> AconsyMainWindow:
 
         if AconsyMainWindow.exists():
             return AconsyMainWindow()
 
         self._launch_if_needed()
 
-        self._username.GetValuePattern().SetValue(user)
+        self._username.GetValuePattern().SetValue(username)
         self._password.GetValuePattern().SetValue(password)
         self._connect.GetInvokePattern().Invoke()
 

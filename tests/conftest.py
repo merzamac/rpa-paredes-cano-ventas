@@ -12,6 +12,13 @@ def input_dir() -> Path:
 def output_dir() -> Path:
     return routes.OUTPUT_DIR
 
+@fixture(scope="session")
+def code() -> str:
+    return "0"*8
+
+@fixture(scope="session")
+def a_type() -> str:
+    return "0"
 
 @fixture(scope="session")
 def excel_errores() -> Path:

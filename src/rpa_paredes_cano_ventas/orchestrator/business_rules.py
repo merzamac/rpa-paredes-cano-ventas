@@ -52,10 +52,10 @@ class BusinessRulesWithApps:
             main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
                 user=credential.username, password=credential.password
             )
-            file = main_aconsys.download_cost_centers(data_csv.save_dir)
-            cost_centers = GetCostCentersFromPDF.execute(file)
-            main_aconsys.register_series(new_series)
-            main_imports.upload_series(new_series)
+            # file = main_aconsys.download_cost_centers(data_csv.save_dir)
+            # cost_centers = GetCostCentersFromPDF.execute(file)
+            # main_aconsys.register_series(new_series)
+            # main_imports.upload_series(new_series)
 
 
 from pathlib import Path

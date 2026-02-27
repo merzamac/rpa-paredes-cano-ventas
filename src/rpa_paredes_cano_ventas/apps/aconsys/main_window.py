@@ -58,26 +58,21 @@ class AconsyMainWindow(TopLevelWindow):
     @property
     def cuentas_corrientes(self)->CuentaCorriente:
         
-        cuenta_corriente_menu = self._window.PaneControl(
+        toolbar  = self._window.PaneControl(
             searchDepth=1, ClassName="ToolbarWndClass"
-        )
-
-        opcion_cuenta_corriente = cuenta_corriente_menu.ToolBarControl(
+        ).ToolBarControl(
             searchDepth=1, ClassName="ToolbarWindow32"
         )
 
-        boton_cuenta_corriente = opcion_cuenta_corriente.ButtonControl(
+        btn_ctas_ctes  = toolbar.ButtonControl(
             searchDepth=1, Name="Cuentas Corrientes"
         )
         
-        assert boton_cuenta_corriente.GetInvokePattern().Invoke(waitTime=15)
+        assert btn_ctas_ctes.GetInvokePattern().Invoke(waitTime=15)
         
 
-        panel_cuenta_corriente = self._window.PaneControl(searchDepth=1, Name="Área de trabajo")
-        
-
-        ventana_cuenta_corriente = panel_cuenta_corriente.WindowControl(
+        window_cuenta_corriente = self._window.PaneControl(searchDepth=1, Name="Área de trabajo").WindowControl(
             searchDepth=1, Name="Cuentas Corrientes"
         )
-        assert ventana_cuenta_corriente.Exists(maxSearchSeconds=15)
-        return CuentaCorriente(ventana_cuenta_corriente)
+        assert window_cuenta_corriente.Exists(maxSearchSeconds=15)
+        return CuentaCorriente(window_cuenta_corriente)

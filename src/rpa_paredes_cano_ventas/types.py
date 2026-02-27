@@ -2,6 +2,9 @@ from numpy import save
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from enum import StrEnum
+class DocumentType(StrEnum):
+    OTROS:str="0"
 
 
 class UtilityMut(type):

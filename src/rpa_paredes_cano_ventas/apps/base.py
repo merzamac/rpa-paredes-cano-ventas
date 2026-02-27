@@ -5,7 +5,9 @@ from abc import ABC
 from datetime import date
 from time import sleep
 import _ctypes
-from uiautomation import WindowControl,ButtonControl, SendKeys
+from uiautomation import WindowControl,ButtonControl, SendKeys,GroupControl
+from rpa_paredes_cano_ventas.utils.excel_manager import ExcelManager
+from rpa_paredes_cano_ventas.utils.controls import wait_control_exist
 
 class BaseWindow:
     """Clase base genérica para ventanas UIAutomation."""
@@ -77,7 +79,7 @@ class Process(ABC):
         self._buttons_area = None
     
     @property
-    def buttons_area(self) -> ButtonControl:
+    def buttons_area(self) -> GroupControl:
         """Área de botones común a todos los módulos."""
         if self._buttons_area is None:
             self._buttons_area = self._window.GroupControl(
@@ -145,3 +147,51 @@ class Process(ABC):
         assert accept.GetInvokePattern().Invoke()
         if dialog.Exists():
             accept.GetInvokePattern().Invoke()
+
+    def export(self, save_dir: Path, file_name:str) -> Path:
+
+        export_button = self.buttons_area.ButtonControl(searchDepth=1, Name="Exportar")
+        # window_excel = WindowControl(searchDepth=1,Name="Libro2 - Excel")
+        excel_window: WindowControl = WindowControl(
+            ClassName="XLMAIN",
+            RegexName=r"Libro.*",
+            searchDepth=1,
+            foundIndex=1,
+        )
+        self._wait_until_enabled(export_button)
+        export_button.Click(simulateMove=False)
+        sleep(3)
+        if not excel_window.Exists():
+            export_button.SetFocus()
+            export_button.GetInvokePattern().Invoke()
+        # esperar_excel()
+        assert excel_window.Exists(maxSearchSeconds=30)
+        #name = f"errores{period_date.month:02d}{str(period_date.year)[-2:]}"
+        file_dir = self._save_report(excel_window, save_dir, file_name)
+        # importaciones = leer_columnas_serie_sucursal()
+        # # Guardar Excel
+
+        # ruta_guardado = guardar_excel_abierto(save_dir, nombre)
+
+        # cerrar_excel_abierto()
+        return file_dir
+
+    def _save_report(
+        self, excel_window_control: WindowControl, save_dir: Path, report_name
+    ) -> Path:
+        # is_ready: bool | None = False
+
+        # while not is_ready:
+        #     is_ready = process_status(excel_window_control.ProcessId)
+        #     if is_ready is None:
+        #         break
+        wait_control_exist(excel_window_control)
+        # if is_ready is None:
+        #     raise ValueError("Imposible guardar el excel")
+        # sleep(3.7)
+        self.window_app.Minimize()
+        excel_window: ExcelManager = ExcelManager(excel_window_control)
+        excel_window.start()
+        file_dir = excel_window.save(save_dir, report_name)
+        excel_window.close()
+        return file_dir

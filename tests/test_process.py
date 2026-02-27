@@ -4,12 +4,24 @@ from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
 from rpa_paredes_cano_ventas.orchestrator.business_rules import (
     GetRegistroMaestroFromExcel,
 )
+from PIL import Image
 from pdfminer.high_level import extract_text
 from pdfminer.pdfdocument import PDFPasswordIncorrect
 from re import Match, search, split, findall
 from typing import cast
-
-
+from rpa_paredes_cano_ventas.apps.imports import (
+    ImportLoginWindow,
+    VasicontLauncher,
+)
+from rpa_paredes_cano_ventas.ocr_processor.parser import DataParser
+from rpa_paredes_cano_ventas.ocr_processor import PyOcr, TesseractEngine
+from rpa_paredes_cano_ventas.ocr_processor.helpers import img_to_ndarry, take_screenshot
+from time import sleep
+from rpa_paredes_cano_ventas.types import DocumentType
+from rpa_paredes_cano_ventas.apps.aconsys import AconsyLoginWindow,AconsyMainWindow
+from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
+from rpa_paredes_cano_ventas import routes
+from rpa_paredes_cano_ventas.utils.pdf_reader import pdf_process
 def natural_sort_key(registro: RegistroMaestro):
     """
     Divide la serie en partes de texto y números enteros.
@@ -29,13 +41,39 @@ def test_series(excel_errores: Path):
     assert result
 
 
-def test_series_export(excel_series: Path):
+def test_get_series(excel_series: Path):
+    credential = CredentialManager.get_credential("IMPORTACIONES")
+    VasicontLauncher(routes.IMPORTACION_PATH).open()
+    main_imports = ImportLoginWindow(routes.IMPORTACION_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    file_name = "series"
+    file = main_imports.download_series(routes.OUTPUT_DIR,file_name)
+    result = GetRegistroMaestroFromExcel.execute(file=file, mode="FULL")
 
-    result = GetRegistroMaestroFromExcel.execute(file=excel_series, mode="FULL")
+def test_subir_series(excel_series: Path):
+    credential = CredentialManager.get_credential("IMPORTACIONES")
+    VasicontLauncher(routes.IMPORTACION_PATH).open()
+    main_imports = ImportLoginWindow(routes.IMPORTACION_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    file_name = "series"
+    main_imports.upload_series(excel_series)
+    assert excel_series
 
+def test_get_cost_center():
+    credential = CredentialManager.get_credential("ACONSYS")
+    main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    cost_centers = main_aconsys.centros_de_costos
+    file = "centros"
+    file = cost_centers.exportar_centros_costos(routes.OUTPUT_DIR,file)
+    result = pdf_process(file)
     assert result
-
-
+  
+    #file = main_aconsys.download_cost_centers()
+    
 def test_finding(excel_series: Path, excel_errores: Path):
     series = GetRegistroMaestroFromExcel.execute(file=excel_series, mode="FULL")
     errores = GetRegistroMaestroFromExcel.execute(file=excel_errores, mode="simple")
@@ -71,75 +109,54 @@ def test_finding(excel_series: Path, excel_errores: Path):
         series_por_tipo[tipo].sort(key=natural_sort_key)
     assert errores_con_coincidencia
 
+def test_cuenta_corrientes(a_type:str, code:str):
+    credential = CredentialManager.get_credential("ACONSYS")
+    main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    
+    cuentas_corrientes = main_aconsys.cuentas_corrientes
+    cuentas_corrientes.start
+    cuentas_corrientes.clients
+    cuentas_corrientes.provider
+    # cuentas_corrientes.account_code(code)
+    # cuentas_corrientes.ruc()
+    # cuentas_corrientes.description(code)
+    cuentas_corrientes.document_type(DocumentType.OTROS)
+    cuentas_corrientes.close
+    
+def test_get_last_cc(code:str):
+    credential = CredentialManager.get_credential("ACONSYS")
+    main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    
+    cuentas_corrientes = main_aconsys.cuentas_corrientes
+    cuentas_corrientes.start
+    cuentas_corrientes.clients
+    cuentas_corrientes.provider
+    cuentas_corrientes.account_code(code)
+    cuentas_corrientes.ruc()
+    cuentas_corrientes.description("TICKETS")
+    cuentas_corrientes.search
+    cuentas_corrientes.scroll_until_end
+    tesseract = TesseractEngine(routes.TESSERACT)
+    ocr_tool = PyOcr(engine=tesseract)
+    raw_text = ocr_tool.process(
+        image_source=img_to_ndarry(take_screenshot(cuentas_corrientes.content)),
+    )
+    accounts, companies = DataParser.clean_text(raw_text)
+    accounts_companies = DataParser.format_results(accounts, companies)
+    last_account_number = max(int(acc) for acc in accounts)
+    assert last_account_number
 
-import re
-from typing import Dict, List
-from pdfminer.high_level import extract_text
+def test_ocr():
+    raw_text = Path("cc.txt").read_text(encoding="utf-8")
+    # Aplicamos Regex
+    accounts, companies = DataParser.clean_text(raw_text)
+    data_final = DataParser.format_results(accounts, companies)
+    last_account_number = max(int(acc) for acc in accounts)
+    assert raw_text
 
-
-import re
-from typing import Dict, List
-from pdfminer.high_level import extract_pages, extract_text
-
-
-def es_ruido(linea: str) -> bool:
-    """Reglas de limpieza para el reporte de ACONSYS."""
-    PALABRAS_CONTROL = {
-        "Código",
-        "Descripción",
-        "Página",
-        "Fecha",
-        "Hora",
-        "Inf.",
-        "BIJOU",
-        "ACONSYS",
-    }
-    FLAGS_ESTADO = {"S", "N", "A", "I"}
-    if linea in PALABRAS_CONTROL or linea in FLAGS_ESTADO:
-        return True
-    if linea.isdigit():
-        return True
-    if re.match(r"\d{2}[/:]\d{2}[/:]", linea):
-        return True
-    return False
-
-
-def test_extraer_maestro_pdf_multipagina(pdf_file: str) -> Dict[str, str]:
-    # Diccionario final unificado
-    centros_costos = {}
-
-    # Iteramos por cada página (page_numbers empieza en 0)
-    # page_numbers=None procesa todas las páginas
-    for page_layout in extract_pages(pdf_file):
-        page_no = page_layout.pageid
-        # Extraemos el texto solo de esta página
-        texto_pagina = extract_text(pdf_file, page_numbers=[page_no - 1])
-
-        # 1. Códigos de la página
-        codigos = re.findall(r"(?m)^\d{4}$", texto_pagina)
-
-        # 2. Descripciones de la página
-        descripciones = []
-        en_zona = False
-        for linea in (l.strip() for l in texto_pagina.split("\n") if l.strip()):
-            if "Descripción" in linea:
-                en_zona = True
-                continue
-            if "Página :" in linea:
-                en_zona = False
-                continue
-
-            if en_zona and not es_ruido(linea):
-                descripciones.append(linea)
-
-        # 3. Validación de integridad POR PÁGINA
-        if len(codigos) != len(descripciones):
-            raise ValueError(
-                f"Error en PÁGINA {page_no}: {len(codigos)} códigos vs {len(descripciones)} descripciones. "
-                f"No se puede continuar para evitar desalineación de datos."
-            )
-
-        # 4. Unir al maestro total
-        centros_costos.update(dict(zip(codigos, descripciones)))
-
-    return centros_costos
+    
+    
