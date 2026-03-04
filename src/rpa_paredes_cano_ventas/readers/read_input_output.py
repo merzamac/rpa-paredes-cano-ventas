@@ -8,7 +8,8 @@ from rpa_paredes_cano_ventas.models.processable import (
 )
 from rpa_paredes_cano_ventas.types import UtilityMut, DataCSV
 from locale import setlocale, LC_TIME
-
+from datetime import date
+from rpa_paredes_cano_ventas import routes
 
 class ReadInputDir(metaclass=UtilityMut):
     __slots__ = []
@@ -50,11 +51,11 @@ class ReadOutputDir(metaclass=UtilityMut):
         )
 
 
-class ReadOutputCSVPreviousMonth(metaclass=UtilityMut):
+class ReadOutputCSVPrevious(metaclass=UtilityMut):
     __slots__ = []
 
     @staticmethod
-    def execute(output_dir: Path) -> tuple[ProcessableFile, ...] | None:
+    def execute(processable_file:ProcessableFile) -> DataCSV :
         """
         Args:
             output_dir (Path): La ruta de la carpeta de salida.
@@ -66,19 +67,13 @@ class ReadOutputCSVPreviousMonth(metaclass=UtilityMut):
         El objetivo de esta clase es obtener los archivos csv del mes anterior.
         el fallo pero si logro crear los masivos del mes anterior.
         """
-        setlocale(LC_TIME, "es_ES.UTF-8")
-        today = datetime.today()
-        month_before = today.replace(day=1) - timedelta(days=1)
-        month_str = month_before.strftime("%B").upper()
-        year_str = month_before.strftime("%Y")
-        file_output_dir = output_dir / year_str / month_str
         input_files: tuple[Path, ...] = (
-            *ReadDir.execute(file_output_dir, f"*{SuffixTypes.CSV}"),
+            *ReadDir.execute(processable_file.output_path, f"*{SuffixTypes.CSV}"),
         )
 
         return (
             DataCSV(
-                period=month_before.date(), files=input_files, save_dir=file_output_dir
+                period=processable_file.period_date, files=input_files, save_dir=processable_file.output_path
             )
             if input_files
             else None

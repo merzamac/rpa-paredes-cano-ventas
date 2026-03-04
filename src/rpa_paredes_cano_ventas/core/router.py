@@ -20,6 +20,7 @@ class Route:
     DOC_PATH : Path
     TEMPLATE_PATH :Path
     TESSERACT:Path
+    BOT_STATE:Path
 
     @classmethod
     def config(cls, bot_path: str, cp: ConfigParser) -> "Route":
@@ -40,6 +41,7 @@ class Route:
         template_path: Path = Path(cp["PATHS"]["TEMPLATE_FILE_VENTAS"])
         doc_path: Path = Path(cp["PATHS"]["RUTA_DOC"])
         tesseract: Path = Path(cp["PATHS"]["TESSERACT"])
+        bot_state:Path = Path(cp["PATHS"]["BOT_STATE"])
 
         for path in (logs_dir, dot_data):
             path.mkdir(parents=True, exist_ok=True)
@@ -57,4 +59,5 @@ class Route:
             TEMPLATE_PATH = template_path,
             DOC_PATH= doc_path,
             TESSERACT=tesseract,
+            BOT_STATE=bot_state,
         )

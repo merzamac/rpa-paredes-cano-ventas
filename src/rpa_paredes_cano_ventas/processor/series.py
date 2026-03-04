@@ -1,6 +1,7 @@
 from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
-
-
+from pathlib import Path
+from pandas import DataFrame
+from thefuzz.process import extractOne
 class SeriesSincronizador:
     """Encapsula la lógica de comparación y enriquecimiento de series."""
 
@@ -15,23 +16,57 @@ class SeriesSincronizador:
 
     def identify_new_series(
         self,
-        errores: tuple[RegistroMaestro],
+        errores: list[RegistroMaestro],
         maestro_plataforma: list[RegistroMaestro],
-    ) -> Tuple[RegistroMaestro]:
+    ) -> list[RegistroMaestro]:
         """Separa errores en: (coincidencias_enriquecidas, nuevas_series)."""
         nuevos: list[RegistroMaestro] = []
-
+        for_test : list[RegistroMaestro] = []
         for err in errores:
             # Lógica de coincidencia
-            maestro = self.mapa_series.get(err.serie) or self.mapa_sucursales.get(
-                err.sucursal
-            )
+            series_exists = self.mapa_series.get(err.serie)
 
-            if maestro:
-                err.centro_costo = maestro.centro_costo
-                err.descripcion_cc = maestro.descripcion_cc
-                maestro_plataforma.append(err)
+            if series_exists:
+                sucursal_exists = self.mapa_sucursales.get(err.sucursal)
+                if sucursal_exists:
+                    err.centro_costo = sucursal_exists.centro_costo
+                    err.descripcion_cc = sucursal_exists.descripcion_cc
+                    # tipo de operacion es estatico, 20
+                    err.descripcion_oper = sucursal_exists.descripcion_oper
+                    err.cuenta_corriente = sucursal_exists.cuenta_corriente
+                    err.descripcion_cta = sucursal_exists.descripcion_cta
+                    maestro_plataforma.append(err)
+                    for_test.append(err)
             else:
                 nuevos.append(err)
+        Path("modificadas_al_instante.txt").write_text(str(for_test), encoding="utf-8")
+        return nuevos
+    @staticmethod
+    def create_series(output_dir:Path,name :str,maestro_plataforma: list[RegistroMaestro]) ->Path:
+        
+        data = [tuple(registro) for registro in maestro_plataforma]
+        columns =[
+                "Serie", 
+                "C.C.", 
+                "Descripción", 
+                "Sucursal", 
+                "T.Op.", 
+                "Descripción", 
+                "Cta.Cte.", 
+                "Descripción"
+            ]
+        df = DataFrame(data, columns=columns)
+        df.index = range(1, len(df) + 1)
+        df.index.name = "Sec."
+        file = output_dir/f"{name}.xlsx"
 
-        return tuple(nuevos)
+        df.to_excel(file,sheet_name="Hoja1")
+        return file
+    @staticmethod
+    def update_news(last_account_number:int,cost_centers:dict,new_series:list,original_series:list)->None:
+
+        descriptions = cost_centers.values()
+        for series in new_series:
+            resultado, puntaje = extractOne(series.sucursal, descriptions)
+            if puntaje > 70:
+                pass

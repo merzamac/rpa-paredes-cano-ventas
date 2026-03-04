@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+
 from rpa_paredes_cano_ventas.apps.imports import (
     ImportMainWindow,
     ImportLoginWindow,
@@ -10,12 +10,11 @@ from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
 from rpa_paredes_cano_ventas.types import DataCSV
 from pathlib import Path
 from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
-from typing import Sequence, Optional
+from typing import Optional,Literal
 from rpa_paredes_cano_ventas.processor.series import SeriesSincronizador
-
-
-# import_app = ImportPlatform()
-# aconsys_app = AconsysPlatform()
+from pathlib import Path
+import pandas as pd
+from dataclasses import dataclass
 @dataclass(frozen=True, slots=True)
 class BusinessRulesWithApps:
     @staticmethod
@@ -29,39 +28,38 @@ class BusinessRulesWithApps:
         excel_file: Optional[Path] = None
         excel_file = main_imports.import_files(data_csv)
         # excel_file = procesar_carga_y_exportar_errores(main_imports, data_csv)
-        errores_raw: tuple[RegistroMaestro, ...] = ()
+        errores_raw: list[RegistroMaestro]
 
         if not excel_file:
             print("No se generó archivo de exportación. Proceso finalizado.")
             return
 
-        # 3. Gestión de Diferencias (Aconsys)
+        # . Gestión de Diferencias (Aconsys)
         errores_raw = GetRegistroMaestroFromExcel.execute(
             file=excel_file, mode="simple"
         )
+        name = f"series{data_csv.period.month:02d}{str(data_csv.period.year)[-2:]}"
         series_ref = GetRegistroMaestroFromExcel.execute(
-            file=main_imports.download_series(data_csv.save_dir), mode="FULL"
+            file=main_imports.download_series(data_csv.save_dir, name), mode="FULL"
         )
-        # 2. Aplicar el patrón
+        #  Aplicar el patrón
         sincronizador = SeriesSincronizador(series_ref)
-        nuevas_series = sincronizador.identify_new_series(errores_raw, series_ref)
+        new_series = sincronizador.identify_new_series(errores_raw, series_ref)
 
-        if nuevas_series:
-            # 4. Registro en ambas plataformas
+        if new_series:
+            #  Registro en ambas plataformas
             credential = CredentialManager.get_credential("ACONSYS")
-            main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
-                user=credential.username, password=credential.password
+            main_aconsys:AconsyMainWindow = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+                username=credential.username, password=credential.password
             )
-            # file = main_aconsys.download_cost_centers(data_csv.save_dir)
-            # cost_centers = GetCostCentersFromPDF.execute(file)
-            # main_aconsys.register_series(new_series)
-            # main_imports.upload_series(new_series)
-
-
-from pathlib import Path
-from typing import Sequence, Literal
-import pandas as pd
-from dataclasses import dataclass
+            main_aconsys.change_work_period(data_csv.period)
+            cost_centers:dict[str, str] = main_aconsys.get_cost_centers(data_csv.save_dir,"centros")
+            last_account_number = main_aconsys.last_account_number
+            
+            sincronizador.update_news(last_account_number,cost_centers,new_series,series_ref)
+            main_aconsys.register_new_account(new_series)
+            series_updated = sincronizador.create_series(data_csv.save_dir,name,series_ref)
+            main_imports.upload_series(series_updated)
 
 
 @dataclass(frozen=True, slots=True)
@@ -84,7 +82,7 @@ class GetRegistroMaestroFromExcel:
     @classmethod
     def execute(
         cls, file: Path, mode: Literal["simple", "full"] = "full"
-    ) -> tuple[RegistroMaestro, ...]:
+    ) -> list[RegistroMaestro]:
         """
         Un solo punto de entrada para cualquier tipo de extracción.
         """
@@ -99,34 +97,4 @@ class GetRegistroMaestroFromExcel:
 
         df = df[cols_to_use].rename(columns=mappings)
 
-        return tuple(RegistroMaestro(**data) for data in df.to_dict(orient="records"))
-
-
-def procesar_carga_y_exportar_errores(
-    main_imports: ImportMainWindow, data_csv: DataCSV
-) -> Optional[Path]:
-    """
-    Coordina la carga de archivos y devuelve la ruta del Excel de errores
-    solo si el proceso de exportación fue exitoso.
-    """
-    importacion = main_imports.sales_imports
-    importacion.period(data_csv.period)
-    importacion.start
-
-    for file in data_csv.files:
-        importacion.select_file(file)
-        importacion.upload
-
-    excel_file: Optional[Path] = None
-    # Solo intentamos exportar si la plataforma indica que hay algo que procesar
-    if importacion.process:
-        # Asumimos que el primer archivo nos da la ruta base
-        excel_file = importacion.export(data_csv.save_dir, data_csv.period)
-
-    importacion.exit
-
-    # Verificamos que el archivo realmente exista antes de devolverlo
-    if excel_file and excel_file.exists():
-        return excel_file
-
-    return None
+        return [RegistroMaestro(**data) for data in df.to_dict(orient="records")]

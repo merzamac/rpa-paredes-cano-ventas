@@ -24,7 +24,7 @@ class RegistroMaestro(BaseModel):
     descripcion_cc: Optional[str] = None
 
     # Tipo de Operación (opcional)
-    tipo_oper: Optional[str] = None
+    tipo_oper: str = "20"
     descripcion_oper: Optional[str] = None
 
     # Cuenta Corriente (opcional)
@@ -74,3 +74,13 @@ class RegistroMaestro(BaseModel):
 
     def __hash__(self) -> int:
         return hash((self.serie, self.sucursal))
+    def __iter__(self):
+        # Aquí defines el orden exacto de los atributos
+        yield self.serie
+        yield self.centro_costo
+        yield self.descripcion_cc
+        yield self.sucursal
+        yield self.tipo_oper
+        yield self.descripcion_oper
+        yield self.cuenta_corriente
+        yield self.descripcion_cta

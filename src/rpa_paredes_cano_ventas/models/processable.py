@@ -14,7 +14,7 @@ from rpa_paredes_cano_ventas.exceptions.file_processor import (
     InvalidFileNameError,
     InvalidFolderPathError,
 )
-
+from rpa_paredes_cano_ventas import routes
 
 class BasePeriodModel(BaseModel):
     """Base class to handle shared equality and hashing logic."""
@@ -73,7 +73,7 @@ class ProcessableFile(BasePeriodModel):
             data["year"] = folder_year
             data["month"] = month
             data["period_date"] = date(int(folder_year), int(month_number), 1)
-            data["output_path"] = Path(folder_year) / month
+            data["output_path"] =routes.OUTPUT_DIR/folder_year/ month
 
         return data
 
@@ -94,7 +94,7 @@ class ProcessedFolder(BasePeriodModel):
 
             parsed = parse(f"1 {month} {year}", languages=["es"])
             if not parsed:
-                raise DateParsingError(f"Could not parse date from:  {month}/{year}")
+                raise ValueError(f"Could not parse date from:  {month}/{year}")
 
             data["period_date"] = parsed.date()
         return data

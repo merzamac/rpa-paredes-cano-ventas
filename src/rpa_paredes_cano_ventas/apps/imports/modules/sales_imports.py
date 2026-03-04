@@ -38,6 +38,7 @@ class SalesImports(Process):
         assert self.buttons_area.Exists(maxSearchSeconds=15)
         upload_button = self.buttons_area.ButtonControl(searchDepth=1, Name="Cargar")
         self._wait_until_enabled(upload_button)
+        sleep(1)
         assert upload_button.GetInvokePattern().Invoke()
         self._handle_vfp_dialog()
         self._wait_until_enabled(upload_button)

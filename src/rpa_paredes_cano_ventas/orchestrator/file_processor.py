@@ -34,29 +34,27 @@ class FileProcessor:
         processable_input_files: tuple[ProcessableFile, ...] = ReadInputDir.execute(
             input_dir=input_dir
         )
-        processable_output_folders: tuple[ProcessedFolder, ...] = ReadOutputDir.execute(
-            output_dir=output_dir
-        )
+        # processable_output_folders: tuple[ProcessedFolder, ...] = ReadOutputDir.execute(
+        #     output_dir=output_dir
+        # )
 
-        input_files_to_process: set[ProcessableFile] = set(
-            processable_input_files
-        ) - set(processable_output_folders)
+        # input_files_to_process: set[ProcessableFile] = set(
+        #     processable_input_files
+        # ) - set(processable_output_folders)
 
-        return tuple(input_files_to_process)
+        return tuple(processable_input_files)
 
     def create_massive_csv(
         self,
         reader: FileDataReader,
         processable: ProcessableFile,
-        output_dir: Path,
         batch_size: int,
     ) -> None:
         logger.info(f"Iniciando procesamiento de: {processable.file_path}")
         int_sheet_name = 0
         start = 1
-        output_dir = output_dir / processable.output_path
         files: list[Path] = []
-        export = Export(output_path=output_dir)
+        export = Export(output_path=processable.output_path)
         for i, chunk in enumerate(reader.get_data(processable.file_path, batch_size)):
 
             int_sheet_name += len(chunk)
@@ -65,14 +63,14 @@ class FileProcessor:
                 chunk, int_sheet_name, processable.period_date
             )
             chunk = self._make_maviso(chunk, start, int_sheet_name)
-            files.append(export.csv(chunk, output_dir, int_sheet_name))
+            files.append(export.csv(chunk, processable.output_path, int_sheet_name))
             export.add_block(chunk)
             start = int_sheet_name + 1
         export.close()
         logger.info("Procesamiento finalizado con éxito.")
         # MakeXLSXIxport.execute(files, output_dir)
         return DataCSV(
-            period=processable.period_date, files=tuple(files), save_dir=output_dir
+            period=processable.period_date, files=tuple(files), save_dir=processable.output_path
         )
 
     def _make_maviso(

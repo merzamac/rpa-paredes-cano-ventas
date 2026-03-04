@@ -167,7 +167,7 @@ class Process(ABC):
         # esperar_excel()
         assert excel_window.Exists(maxSearchSeconds=30)
         #name = f"errores{period_date.month:02d}{str(period_date.year)[-2:]}"
-        file_dir = self._save_report(excel_window, save_dir, file_name)
+        file_dir:Path = self._save_report(excel_window, save_dir, file_name)
         # importaciones = leer_columnas_serie_sucursal()
         # # Guardar Excel
 

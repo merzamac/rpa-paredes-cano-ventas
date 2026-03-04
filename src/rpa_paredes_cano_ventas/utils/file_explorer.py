@@ -68,4 +68,4 @@ class FileExplorerWindow:
             yes_confirm = save_as_confirm.ButtonControl(searchDepth=2,Name="Sí")
             yes_confirm.GetInvokePattern().Invoke(waitTime=10)
 
-        return file
+        return Path(file)

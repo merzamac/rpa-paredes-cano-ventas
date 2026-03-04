@@ -59,6 +59,6 @@ def pdf_process(pdf_file: Path) -> dict[str, str]:
             )
 
         # 4. Unir al maestro total
-        centros_costos.update(dict(zip(codigos, descripciones)))
+        centros_costos.update(dict(zip(descripciones,codigos)))
 
     return centros_costos

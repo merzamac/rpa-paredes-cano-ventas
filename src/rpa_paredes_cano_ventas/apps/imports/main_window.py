@@ -73,11 +73,7 @@ class ImportMainWindow(TopLevelWindow):
 
         importacion.exit
 
-        # Verificamos que el archivo realmente exista antes de devolverlo
-        if excel_file and excel_file.exists():
-            return excel_file
-
-        return None
+        return excel_file
 
     @property
     def series_by_cost_center(self) -> SeriesByCostCenter:
@@ -89,8 +85,9 @@ class ImportMainWindow(TopLevelWindow):
     def download_series(self, save_dir: Path, name:str) -> Path:
         
         window = self.series_by_cost_center
-        
-        return window.export(save_dir,name)
+        file = window.export(save_dir,name)
+        window.exit
+        return file
     def upload_series(self, file: Path) -> None:
         
         window = self.series_by_cost_center

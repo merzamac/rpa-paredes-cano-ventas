@@ -57,7 +57,7 @@ class CuentaCorriente:
     @property
     def scroll_until_end(self)->None:
         sleep(0.5)
-        content_area = self._form_area.PaneControl(searchDepth=1,ClassName="TL50.ApexList32.20")
+        content_area = self.content
         scroll_bar = content_area.ScrollBarControl(searchDepth=1, AutomationId="52506")
         left_button= content_area.ScrollBarControl(searchDepth=1, AutomationId="52505").ButtonControl(searchDepth=1,Name="Columna a la izquierda")
         page_down = scroll_bar.ButtonControl(searchDepth=1,Name="Av Pág")

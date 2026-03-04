@@ -3675,3 +3675,6 @@
 2026-02-27 02:15:10.423 cuenta_corriente.py[64] scroll_until_end -> Can not move cursor. ButtonControl's BoundingRectangle is (0,0,0,0)[0x0]. SearchProperties: {Name: 'Av Pág', ControlType: ButtonControl}
 2026-02-27 02:15:10.625 cuenta_corriente.py[64] scroll_until_end -> Can not move cursor. ButtonControl's BoundingRectangle is (0,0,0,0)[0x0]. SearchProperties: {Name: 'Av Pág', ControlType: ButtonControl}
 2026-02-27 02:15:10.828 cuenta_corriente.py[64] scroll_until_end -> 2026-02-27 03:19:34.197 pydevd_safe_repr.py[343] _repr_obj -> 2026-02-27 06:16:37.222 main_window.py[71] cuentas_corrientes -> Find Control Timeout(10s): {Name: 'Cuentas Corrientes', ControlType: ButtonControl}
+2026-02-27 21:30:41.201 main_window.py[43] change_work_period -> Find Control Timeout(10s): {Name: 'Cambio Periodo de Trabajo    Ctrl+I', ControlType: MenuItemControl}
+2026-02-27 21:30:52.201 saferepr.py[73] repr_instance -> Find Control Timeout(10s): {Name: 'Cambio Periodo de Trabajo    Ctrl+I', ControlType: MenuItemControl}
+2026-02-27 22:23:33.234 pydevd_safe_repr.py[343] _repr_obj -> 2026-02-27 22:30:33.862 pydevd_safe_repr.py[343] _repr_obj -> 2026-03-02 00:23:23.681 pydevd_safe_repr.py[343] _repr_obj -> 2026-03-02 19:48:29.690 pydevd_safe_repr.py[343] _repr_obj -> 

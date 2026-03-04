@@ -1,7 +1,7 @@
 
 class DataParser:
     @staticmethod
-    def clean_text(raw_text: str):
+    def clean_text(raw_text: str) -> tuple[list[str], list[str]]:
         # Convertimos el texto en una lista de líneas limpias
         lines = [line.strip() for line in raw_text.split('\n') if line.strip()]
         

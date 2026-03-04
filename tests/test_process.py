@@ -4,6 +4,7 @@ from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
 from rpa_paredes_cano_ventas.orchestrator.business_rules import (
     GetRegistroMaestroFromExcel,
 )
+from thefuzz.process import extractOne
 from PIL import Image
 from pdfminer.high_level import extract_text
 from pdfminer.pdfdocument import PDFPasswordIncorrect
@@ -13,6 +14,8 @@ from rpa_paredes_cano_ventas.apps.imports import (
     ImportLoginWindow,
     VasicontLauncher,
 )
+from rpa_paredes_cano_ventas.processor.series import SeriesSincronizador
+from datetime import date
 from rpa_paredes_cano_ventas.ocr_processor.parser import DataParser
 from rpa_paredes_cano_ventas.ocr_processor import PyOcr, TesseractEngine
 from rpa_paredes_cano_ventas.ocr_processor.helpers import img_to_ndarry, take_screenshot
@@ -158,5 +161,30 @@ def test_ocr():
     last_account_number = max(int(acc) for acc in accounts)
     assert raw_text
 
+def test_peridod():
+    credential = CredentialManager.get_credential("ACONSYS")
+    main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    main_aconsys.change_work_period(date(2025,1,1))
     
-    
+def test_limpiando_series(excel_series: Path, excel_errores: Path):
+    series_ref = GetRegistroMaestroFromExcel.execute(file=excel_series, mode="FULL")
+    errores_raw = GetRegistroMaestroFromExcel.execute(file=excel_errores, mode="simple")
+    sincronizador = SeriesSincronizador(series_ref)
+    nuevas_series = sincronizador.identify_new_series(errores_raw, series_ref)
+    sincronizador.create_series(routes.OUTPUT_DIR,"series_test",series_ref)
+    Path("Nuevas_registrar.txt").write_text(str(nuevas_series), encoding="utf-8")
+
+def test_encontrar_numberCC(pdf_file:Path,excel_series: Path, excel_errores: Path):
+    series_ref = GetRegistroMaestroFromExcel.execute(file=excel_series, mode="FULL")
+    errores_raw = GetRegistroMaestroFromExcel.execute(file=excel_errores, mode="simple")
+    sincronizador = SeriesSincronizador(series_ref)
+    nuevas_series = sincronizador.identify_new_series(errores_raw, series_ref)
+    cost_centers:dict = pdf_process(pdf_file)
+    descriptions = list(cost_centers.keys())
+    for series in series_ref:
+        resultado, puntaje = extractOne("TM MALL AVENTURA SANTA ANITA", descriptions)
+        if puntaje > 70:
+            value = cost_centers[resultado]
+            assert value
