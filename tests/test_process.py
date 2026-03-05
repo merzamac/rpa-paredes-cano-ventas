@@ -188,3 +188,22 @@ def test_encontrar_numberCC(pdf_file:Path,excel_series: Path, excel_errores: Pat
         if puntaje > 70:
             value = cost_centers[resultado]
             assert value
+
+def test_minimize_maximize():
+    credential = CredentialManager.get_credential("ACONSYS")
+    main_aconsys = AconsyLoginWindow(routes.ACONSYS_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    main_aconsys.change_work_period(date(2025,1,1))
+    main_aconsys.minimize()
+    credential = CredentialManager.get_credential("IMPORTACIONES")
+    VasicontLauncher(routes.IMPORTACION_PATH).open()
+    main_imports = ImportLoginWindow(routes.IMPORTACION_PATH).login(
+            username=credential.username, password=credential.password
+    )
+    main_imports.minimize()
+    main_aconsys.maximize()
+    main_aconsys.minimize()
+    main_imports.maximize()
+    
+    

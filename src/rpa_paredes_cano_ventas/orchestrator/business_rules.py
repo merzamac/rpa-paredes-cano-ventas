@@ -45,6 +45,7 @@ class BusinessRulesWithApps:
         #  Aplicar el patrón
         sincronizador = SeriesSincronizador(series_ref)
         new_series = sincronizador.identify_new_series(errores_raw, series_ref)
+        main_imports.minimize()
 
         if new_series:
             #  Registro en ambas plataformas
@@ -59,6 +60,7 @@ class BusinessRulesWithApps:
             sincronizador.update_news(last_account_number,cost_centers,new_series,series_ref)
             main_aconsys.register_new_account(new_series)
             series_updated = sincronizador.create_series(data_csv.save_dir,name,series_ref)
+            main_imports.maximize()
             main_imports.upload_series(series_updated)
 
 

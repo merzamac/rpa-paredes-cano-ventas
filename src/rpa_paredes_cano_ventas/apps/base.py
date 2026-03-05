@@ -39,6 +39,16 @@ class BaseWindow:
     def ensure_ready(cls, timeout: int = 15) -> None:
         cls.wait_for(timeout)
         cls.activate()
+        
+    @classmethod
+    def minimize(cls) -> None:
+        if not cls._window.IsMinimize():
+            cls._window.Minimize(waitTime=15)
+    @classmethod
+    def maximize(cls, timeout: int = 15) -> None:
+        if not cls._window.IsMaximize():
+            cls._window.Maximize(waitTime=15)
+        cls.ensure_ready()
 
 
 class TopLevelWindow(BaseWindow):
