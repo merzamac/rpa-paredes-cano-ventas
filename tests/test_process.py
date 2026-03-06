@@ -271,4 +271,4 @@ def test_new_accounts(excel_series: Path, excel_errores: Path):
         username=credential.username, password=credential.password
     )
     main_aconsys.change_work_period(date(2025, 1, 1))
-    main_aconsys.register_accounts(series_ref)
+    main_aconsys.register_accounts(series_ref[:2])

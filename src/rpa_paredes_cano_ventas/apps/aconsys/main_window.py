@@ -181,11 +181,10 @@ class AconsyMainWindow(TopLevelWindow):
             cuentas_corrientes.new_account
             cuentas_corrientes.clients
             cuentas_corrientes.provider
-            num = 323
-            num += 1
-            cuentas_corrientes.account_code(format(num, "011d"))
-            # cuentas_corrientes.account_code(series.cuenta_corriente)
+            cuentas_corrientes.account_code(series.cuenta_corriente)
             cuentas_corrientes.ruc()
-            cuentas_corrientes.description(series.descripcion_cta)
+            cuentas_corrientes.description(series.descripcion_cc)
             cuentas_corrientes.document_type("0")
-            # cuentas_corrientes.save
+            cuentas_corrientes.save
+            sleep(1)
+        cuentas_corrientes.close
