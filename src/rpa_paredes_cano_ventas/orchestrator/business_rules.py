@@ -1,4 +1,3 @@
-
 from rpa_paredes_cano_ventas.apps.imports import (
     ImportMainWindow,
     ImportLoginWindow,
@@ -10,11 +9,13 @@ from rpa_paredes_cano_ventas.utils.credentials import CredentialManager
 from rpa_paredes_cano_ventas.types import DataCSV
 from pathlib import Path
 from rpa_paredes_cano_ventas.processor.registro_maestro import RegistroMaestro
-from typing import Optional,Literal
+from typing import Optional, Literal
 from rpa_paredes_cano_ventas.processor.series import SeriesSincronizador
 from pathlib import Path
 import pandas as pd
 from dataclasses import dataclass
+
+
 @dataclass(frozen=True, slots=True)
 class BusinessRulesWithApps:
     @staticmethod
@@ -45,23 +46,34 @@ class BusinessRulesWithApps:
         #  Aplicar el patrón
         sincronizador = SeriesSincronizador(series_ref)
         new_series = sincronizador.identify_new_series(errores_raw, series_ref)
-        main_imports.minimize()
 
         if new_series:
-            #  Registro en ambas plataformas
+
+            # Registro en ambas plataformas
             credential = CredentialManager.get_credential("ACONSYS")
-            main_aconsys:AconsyMainWindow = AconsyLoginWindow(routes.ACONSYS_PATH).login(
-                username=credential.username, password=credential.password
-            )
+            main_aconsys: AconsyMainWindow = AconsyLoginWindow(
+                routes.ACONSYS_PATH
+            ).login(username=credential.username, password=credential.password)
             main_aconsys.change_work_period(data_csv.period)
-            cost_centers:dict[str, str] = main_aconsys.get_cost_centers(data_csv.save_dir,"centros")
+            pdf_name = "centros_costos"
+            cost_centers: dict[str, str] = main_aconsys.get_cost_centers(
+                data_csv.save_dir, pdf_name
+            )
             last_account_number = main_aconsys.last_account_number
-            
-            sincronizador.update_news(last_account_number,cost_centers,new_series,series_ref)
-            main_aconsys.register_new_account(new_series)
-            series_updated = sincronizador.create_series(data_csv.save_dir,name,series_ref)
-            main_imports.maximize()
-            main_imports.upload_series(series_updated)
+
+            errors = sincronizador.update_news(
+                last_account_number, cost_centers, new_series
+            )
+
+            if errors:
+                # dejar notificacion de errores
+                return
+            main_aconsys.register_accounts(new_series)
+
+        series = new_series + series_ref
+        series_updated = sincronizador.create_series(data_csv.save_dir, name, series)
+
+        main_imports.upload_series(series_updated)
 
 
 @dataclass(frozen=True, slots=True)
